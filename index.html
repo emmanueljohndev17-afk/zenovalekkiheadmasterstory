@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zenova – The Lekki Headmaster</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a1628;
+  --navy-mid: #112244;
+  --navy-light: #1a3a6e;
+  --navy-pale: #1e4a8a;
+  --accent: #2563d4;
+  --accent-light: #4a90e8;
+  --gold: #c9a84c;
+  --gold-light: #e8c96a;
+  --white: #ffffff;
+  --off-white: #f7f9fc;
+  --gray-light: #e8edf5;
+  --gray: #8fa3c0;
+  --text: #0a1628;
+  --text-light: #4a6080;
+  --success: #27ae60;
+  --danger: #e74c3c;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);overflow-x:hidden;}
+
+/* ── AUTH OVERLAY ── */
+#authOverlay{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--navy);
+  display:flex;align-items:center;justify-content:center;
+  animation:fadeIn 0.4s ease;
+}
+#authOverlay.hidden{display:none;}
+.auth-box{
+  background:var(--white);border-radius:24px;
+  padding:2.5rem 2rem;width:90%;max-width:420px;
+  box-shadow:0 32px 80px rgba(0,0,0,0.4);
+  text-align:center;
+}
+.auth-logo{
+  font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;
+  color:var(--navy);letter-spacing:2px;margin-bottom:0.3rem;
+}
+.auth-logo span{color:var(--gold);}
+.auth-sub{font-size:0.82rem;color:var(--gray);margin-bottom:1.8rem;}
+.auth-tabs{display:flex;gap:0.5rem;background:var(--gray-light);border-radius:10px;padding:4px;margin-bottom:1.5rem;}
+.auth-tab{flex:1;padding:0.55rem;border:none;border-radius:8px;background:transparent;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:600;color:var(--gray);cursor:pointer;transition:all 0.2s;}
+.auth-tab.active{background:var(--navy);color:var(--white);}
+.auth-form{display:flex;flex-direction:column;gap:0.9rem;}
+.auth-form input{
+  border:1.5px solid var(--gray-light);border-radius:10px;
+  padding:0.8rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.92rem;
+  color:var(--text);outline:none;transition:border-color 0.2s;
+}
+.auth-form input:focus{border-color:var(--accent);}
+.auth-form input::placeholder{color:var(--gray);}
+.btn-auth{
+  background:var(--navy);color:var(--white);border:none;border-radius:10px;
+  padding:0.85rem;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:700;
+  cursor:pointer;transition:all 0.2s;margin-top:0.3rem;
+}
+.btn-auth:hover{background:var(--navy-light);}
+.auth-msg{font-size:0.8rem;color:var(--danger);min-height:18px;margin-top:0.2rem;}
+.auth-msg.ok{color:var(--success);}
+.auth-divider{display:flex;align-items:center;gap:0.8rem;color:var(--gray);font-size:0.78rem;margin:0.5rem 0;}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--gray-light);}
+.google-btn{
+  background:var(--off-white);border:1.5px solid var(--gray-light);border-radius:10px;
+  padding:0.75rem;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:600;
+  color:var(--text);cursor:pointer;transition:all 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:0.6rem;
+}
+.google-btn:hover{border-color:var(--accent);background:var(--white);}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  background:var(--navy);padding:0 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  height:68px;box-shadow:0 2px 24px rgba(10,22,40,0.18);
+}
+.nav-logo{
+  font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;
+  color:var(--white);letter-spacing:2px;display:flex;align-items:center;gap:10px;cursor:pointer;
+}
+.nav-logo span{color:var(--gold);}
+.nav-links{display:flex;gap:0.2rem;flex-wrap:wrap;}
+.nav-links button{
+  background:none;border:none;color:var(--gray);font-family:'DM Sans',sans-serif;
+  font-size:0.85rem;font-weight:500;padding:0.45rem 0.9rem;border-radius:6px;
+  cursor:pointer;transition:all 0.2s;
+}
+.nav-links button:hover,.nav-links button.active{color:var(--white);background:var(--navy-light);}
+.nav-links button.active{color:var(--gold);background:rgba(201,168,76,0.1);}
+.nav-user{
+  display:flex;align-items:center;gap:0.7rem;
+}
+.nav-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--accent);color:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.85rem;font-weight:700;
+}
+.btn-logout{
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+  color:var(--gray);border-radius:7px;padding:0.35rem 0.8rem;
+  font-size:0.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:all 0.2s;
+}
+.btn-logout:hover{color:var(--white);border-color:rgba(255,255,255,0.3);}
+
+/* ── PAGES ── */
+.page{display:none;min-height:100vh;padding-top:68px;}
+.page.active{display:block;}
+
+/* ══ HOME ══ */
+.hero{
+  background:var(--navy);position:relative;overflow:hidden;
+  padding:6rem 2.5rem 5rem;display:flex;flex-direction:column;align-items:center;text-align:center;
+}
+.hero::before{content:'';position:absolute;top:-60px;right:-80px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,212,0.18) 0%,transparent 70%);pointer-events:none;}
+.hero::after{content:'';position:absolute;bottom:-80px;left:-60px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.1) 0%,transparent 70%);pointer-events:none;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);border-radius:50px;padding:0.4rem 1.1rem;color:var(--gold);font-size:0.82rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:2rem;animation:fadeDown 0.6s ease both;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,5vw,4rem);font-weight:900;color:var(--white);line-height:1.15;margin-bottom:1rem;animation:fadeDown 0.7s 0.1s ease both;}
+.hero h1 em{color:var(--gold);font-style:normal;}
+.hero p{max-width:560px;color:var(--gray);font-size:1.05rem;line-height:1.75;margin-bottom:2.5rem;animation:fadeDown 0.7s 0.2s ease both;}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;animation:fadeDown 0.7s 0.3s ease both;}
+.btn-primary{background:var(--accent);color:var(--white);border:none;border-radius:10px;padding:0.85rem 2rem;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;box-shadow:0 4px 20px rgba(37,99,212,0.35);}
+.btn-primary:hover{background:var(--accent-light);transform:translateY(-2px);}
+.btn-outline{background:transparent;color:var(--white);border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;padding:0.85rem 2rem;font-size:0.95rem;font-weight:500;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.btn-outline:hover{border-color:var(--white);background:rgba(255,255,255,0.06);}
+
+.stats-bar{background:var(--off-white);border-bottom:1px solid var(--gray-light);display:flex;justify-content:center;flex-wrap:wrap;}
+.stat-item{padding:1.6rem 2.5rem;text-align:center;border-right:1px solid var(--gray-light);flex:1;min-width:130px;}
+.stat-item:last-child{border-right:none;}
+.stat-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--navy);display:block;}
+.stat-label{font-size:0.78rem;color:var(--text-light);font-weight:500;letter-spacing:0.5px;}
+
+.section{padding:5rem 2.5rem;max-width:1100px;margin:0 auto;}
+.section-tag{display:inline-block;background:var(--navy);color:var(--white);font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:0.35rem 1rem;border-radius:4px;margin-bottom:1rem;}
+.section h2{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3vw,2.5rem);font-weight:700;color:var(--navy);margin-bottom:1rem;line-height:1.2;}
+.section p{color:var(--text-light);line-height:1.8;font-size:1rem;}
+
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+@media(max-width:700px){.about-grid{grid-template-columns:1fr;gap:2rem;}}
+.about-img-box{background:var(--navy);border-radius:20px;overflow:hidden;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;position:relative;}
+.book-icon{font-size:6rem;opacity:0.15;position:absolute;}
+.book-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:2rem;text-align:center;position:relative;z-index:1;width:80%;}
+.book-card h3{font-family:'Playfair Display',serif;color:var(--white);font-size:1.2rem;margin-bottom:0.4rem;}
+.book-card p{color:var(--gray);font-size:0.85rem;}
+.book-card .author-tag{display:inline-block;background:var(--gold);color:var(--navy);font-size:0.72rem;font-weight:700;padding:0.25rem 0.8rem;border-radius:50px;margin-top:0.8rem;}
+
+.themes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.2rem;margin-top:2.5rem;}
+.theme-card{background:var(--white);border:1.5px solid var(--gray-light);border-radius:14px;padding:1.5rem;transition:all 0.25s;}
+.theme-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 8px 30px rgba(37,99,212,0.1);}
+.theme-icon{font-size:1.8rem;margin-bottom:0.8rem;display:block;}
+.theme-card h4{font-size:0.95rem;font-weight:600;color:var(--navy);margin-bottom:0.4rem;}
+.theme-card p{font-size:0.82rem;color:var(--text-light);line-height:1.6;}
+
+/* Characters */
+.chars-section{background:var(--navy);padding:5rem 2.5rem;}
+.chars-inner{max-width:1100px;margin:0 auto;}
+.chars-section .section-tag{background:rgba(255,255,255,0.1);}
+.chars-section h2{color:var(--white);}
+.chars-section .chars-inner>p{color:var(--gray);margin-bottom:0.5rem;}
+.chars-group-label{color:var(--gold);font-size:0.78rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:2rem 0 1rem;display:flex;align-items:center;gap:0.7rem;}
+.chars-group-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.1);}
+.chars-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:1rem;}
+.char-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:1.2rem;transition:all 0.25s;}
+.char-card:hover{background:rgba(255,255,255,0.1);border-color:var(--gold);}
+.char-avatar{width:44px;height:44px;border-radius:50%;background:var(--navy-pale);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:0.8rem;border:2px solid rgba(255,255,255,0.1);}
+.char-card h4{color:var(--white);font-size:0.88rem;font-weight:600;margin-bottom:0.2rem;}
+.char-role{color:var(--gold);font-size:0.72rem;font-weight:500;margin-bottom:0.4rem;}
+.char-card p{color:var(--gray);font-size:0.78rem;line-height:1.5;}
+
+/* Social */
+.social-section{background:var(--off-white);padding:4rem 2.5rem;}
+.social-inner{max-width:900px;margin:0 auto;text-align:center;}
+.social-inner h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--navy);margin-bottom:0.5rem;}
+.social-inner p{color:var(--text-light);margin-bottom:2rem;}
+.social-grid{display:flex;flex-wrap:wrap;gap:0.8rem;justify-content:center;}
+.social-btn{
+  display:flex;align-items:center;gap:0.6rem;
+  background:var(--white);border:1.5px solid var(--gray-light);border-radius:12px;
+  padding:0.7rem 1.2rem;text-decoration:none;color:var(--navy);
+  font-size:0.85rem;font-weight:600;transition:all 0.2s;
+  font-family:'DM Sans',sans-serif;
+}
+.social-btn:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 20px rgba(37,99,212,0.12);}
+.social-btn .s-icon{font-size:1.1rem;}
+
+.cta-band{background:var(--accent);padding:4rem 2.5rem;text-align:center;}
+.cta-band h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--white);margin-bottom:0.8rem;}
+.cta-band p{color:rgba(255,255,255,0.75);margin-bottom:2rem;}
+.btn-white{background:var(--white);color:var(--accent);border:none;border-radius:10px;padding:0.9rem 2.2rem;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.15);}
+
+footer{background:var(--navy);color:var(--gray);text-align:center;padding:2rem;font-size:0.82rem;border-top:1px solid rgba(255,255,255,0.06);}
+footer span{color:var(--gold);font-weight:600;}
+
+/* ══ PAGE HEADER ══ */
+.page-header{background:var(--navy);padding:4rem 2.5rem 3rem;text-align:center;}
+.page-header h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);color:var(--white);font-weight:900;margin-bottom:0.7rem;}
+.page-header p{color:var(--gray);font-size:1rem;}
+
+/* ══ CHAPTERS ══ */
+.chapters-container{max-width:900px;margin:0 auto;padding:3rem 2rem;}
+.chapter-card{background:var(--white);border:1.5px solid var(--gray-light);border-radius:16px;margin-bottom:1.2rem;overflow:hidden;transition:all 0.25s;}
+.chapter-card:hover{border-color:var(--accent);box-shadow:0 6px 28px rgba(37,99,212,0.1);}
+.chapter-header{display:flex;align-items:center;justify-content:space-between;padding:1.3rem 1.6rem;cursor:pointer;background:var(--white);}
+.chapter-left{display:flex;align-items:center;gap:1rem;}
+.chapter-num{width:40px;height:40px;border-radius:10px;background:var(--navy);color:var(--white);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;flex-shrink:0;}
+.chapter-title{font-size:0.98rem;font-weight:600;color:var(--navy);}
+.chapter-subtitle{font-size:0.76rem;color:var(--text-light);margin-top:2px;}
+.chapter-toggle{font-size:1.1rem;color:var(--gray);transition:transform 0.3s;flex-shrink:0;}
+.chapter-card.open .chapter-toggle{transform:rotate(180deg);color:var(--accent);}
+.chapter-card.open .chapter-header{border-bottom:1.5px solid var(--gray-light);}
+.chapter-body{max-height:0;overflow:hidden;transition:max-height 0.45s ease;}
+.chapter-body-inner{padding:1.5rem 1.6rem;}
+.chapter-body p{color:var(--text-light);line-height:1.85;font-size:0.93rem;margin-bottom:0.8rem;}
+.chapter-body p:last-child{margin-bottom:0;}
+.chapter-key{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid var(--gray-light);}
+.key-tag{background:var(--navy);color:var(--white);font-size:0.7rem;font-weight:600;padding:0.2rem 0.7rem;border-radius:50px;}
+
+/* ── AUDIO PLAYER ── */
+.audio-player{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);
+  border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem;
+  display:flex;align-items:center;gap:1rem;
+}
+.audio-play-btn{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--gold);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all 0.2s;color:var(--navy);font-size:1rem;
+}
+.audio-play-btn:hover{background:var(--gold-light);transform:scale(1.05);}
+.audio-info{flex:1;min-width:0;}
+.audio-title{color:var(--white);font-size:0.82rem;font-weight:600;margin-bottom:0.3rem;}
+.audio-progress-wrap{display:flex;align-items:center;gap:0.6rem;}
+.audio-bar{flex:1;height:4px;background:rgba(255,255,255,0.2);border-radius:50px;cursor:pointer;position:relative;}
+.audio-fill{height:100%;border-radius:50px;background:var(--gold);width:0%;transition:width 0.1s;}
+.audio-time{color:var(--gray);font-size:0.7rem;white-space:nowrap;}
+audio{display:none;}
+
+/* ══ CBT PAGE ══ */
+.cbt-container{max-width:860px;margin:0 auto;padding:3rem 2rem;}
+.section-picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;margin-bottom:2rem;}
+.section-card{
+  background:var(--white);border:2px solid var(--gray-light);
+  border-radius:18px;padding:2rem 1.5rem;text-align:center;
+  cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden;
+}
+.section-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--gray-light);transition:background 0.2s;}
+.section-card.s1::before{background:var(--accent);}
+.section-card.s2::before{background:var(--gold);}
+.section-card.s3::before{background:var(--success);}
+.section-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 10px 36px rgba(37,99,212,0.13);}
+.sc-icon{font-size:2.2rem;margin-bottom:0.8rem;}
+.sc-label{color:var(--gray);font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:0.3rem;}
+.sc-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--navy);margin-bottom:0.5rem;}
+.sc-desc{font-size:0.8rem;color:var(--text-light);line-height:1.5;}
+.sc-badge{display:inline-block;background:var(--navy);color:var(--white);font-size:0.72rem;font-weight:700;padding:0.25rem 0.8rem;border-radius:50px;margin-top:0.8rem;}
+
+#quizSection{display:none;}
+.quiz-back-btn{display:flex;align-items:center;gap:0.5rem;background:none;border:none;color:var(--accent);font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;margin-bottom:1.5rem;padding:0.4rem 0;}
+.quiz-back-btn:hover{color:var(--navy);}
+.cbt-info-bar{display:flex;gap:0.8rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.info-pill{background:var(--navy);color:var(--white);border-radius:50px;padding:0.4rem 1rem;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:6px;}
+.info-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);}
+.cbt-progress-bar{background:var(--gray-light);border-radius:50px;height:7px;margin-bottom:2rem;overflow:hidden;}
+.cbt-progress-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,var(--accent),var(--accent-light));transition:width 0.4s ease;}
+.q-card{background:var(--white);border:1.5px solid var(--gray-light);border-radius:18px;padding:2rem;margin-bottom:1.2rem;}
+.q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;}
+.q-num{font-size:0.76rem;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;}
+.q-badge{font-size:0.7rem;font-weight:700;padding:0.2rem 0.7rem;border-radius:50px;}
+.q-badge.easy{background:#e6f7ed;color:#1a7a3f;}
+.q-badge.medium{background:#fff3e0;color:#b36a00;}
+.q-badge.hard{background:#fce8e8;color:#c0392b;}
+.q-text{font-size:1rem;font-weight:600;color:var(--navy);line-height:1.55;margin-bottom:1.4rem;}
+.options-list{list-style:none;display:flex;flex-direction:column;gap:0.65rem;}
+.option-btn{display:flex;align-items:center;gap:0.9rem;width:100%;border:1.5px solid var(--gray-light);border-radius:10px;padding:0.85rem 1.1rem;background:var(--white);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.91rem;color:var(--navy);text-align:left;transition:all 0.2s;}
+.option-btn:hover:not(:disabled){border-color:var(--accent);background:rgba(37,99,212,0.04);}
+.option-btn .opt-letter{width:28px;height:28px;border-radius:7px;background:var(--gray-light);color:var(--text-light);display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;flex-shrink:0;transition:all 0.2s;}
+.option-btn.correct{border-color:#27ae60;background:#e6f7ed;}
+.option-btn.correct .opt-letter{background:#27ae60;color:white;}
+.option-btn.wrong{border-color:#e74c3c;background:#fce8e8;}
+.option-btn.wrong .opt-letter{background:#e74c3c;color:white;}
+.option-btn:disabled{cursor:default;}
+.q-explanation{margin-top:1rem;padding:0.9rem 1.1rem;background:var(--off-white);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;font-size:0.85rem;color:var(--text-light);line-height:1.7;display:none;}
+.q-explanation.show{display:block;}
+.cbt-controls{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-top:1.5rem;}
+.btn-nav{background:var(--navy);color:var(--white);border:none;border-radius:10px;padding:0.75rem 1.6rem;font-size:0.9rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-nav:hover{background:var(--navy-light);}
+.btn-nav:disabled{opacity:0.35;cursor:default;}
+.btn-finish{background:var(--accent);color:var(--white);border:none;border-radius:10px;padding:0.75rem 1.8rem;font-size:0.9rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;box-shadow:0 4px 16px rgba(37,99,212,0.3);}
+.btn-finish:hover{background:var(--accent-light);}
+.score-card{background:var(--navy);border-radius:20px;padding:3rem 2rem;text-align:center;display:none;}
+.score-card.show{display:block;}
+.score-emoji{font-size:3.5rem;margin-bottom:1rem;}
+.score-card h2{font-family:'Playfair Display',serif;color:var(--white);font-size:2rem;margin-bottom:0.5rem;}
+.score-big{font-size:4rem;font-weight:900;color:var(--gold);font-family:'Playfair Display',serif;}
+.score-card p{color:var(--gray);margin:0.5rem 0 1.5rem;}
+.score-btns{display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;}
+.btn-retry{background:var(--white);color:var(--navy);border:none;border-radius:10px;padding:0.8rem 1.8rem;font-weight:700;font-size:0.92rem;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-back-sections{background:rgba(255,255,255,0.1);color:var(--white);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:0.8rem 1.8rem;font-weight:600;font-size:0.92rem;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@media(max-width:600px){nav{padding:0 1rem;}.nav-links button{padding:0.35rem 0.6rem;font-size:0.76rem;}.hero{padding:3.5rem 1.2rem 2.5rem;}.section{padding:3rem 1.2rem;}.chapters-container,.cbt-container{padding:2rem 1rem;}.chars-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}}
+</style>
+</head>
+<body>
+
+<!-- ══════════ AUTH OVERLAY ══════════ -->
+<div id="authOverlay">
+  <div class="auth-box">
+    <div class="auth-logo">Zen<span>ova</span></div>
+    <div class="auth-sub">JAMB 2026 · The Lekki Headmaster Study Platform</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+    <div id="loginForm" class="auth-form">
+      <input type="email" id="loginEmail" placeholder="Email address" />
+      <input type="password" id="loginPass" placeholder="Password" />
+      <button class="btn-auth" onclick="doLogin()">Sign In</button>
+      <div class="auth-divider">or</div>
+      <button class="google-btn" onclick="doGoogle()">🌐 Continue with Google</button>
+      <div id="loginMsg" class="auth-msg"></div>
+    </div>
+    <div id="signupForm" class="auth-form" style="display:none">
+      <input type="text" id="signupName" placeholder="Full name" />
+      <input type="email" id="signupEmail" placeholder="Email address" />
+      <input type="password" id="signupPass" placeholder="Password (min 6 chars)" />
+      <button class="btn-auth" onclick="doSignup()">Create Account</button>
+      <div class="auth-divider">or</div>
+      <button class="google-btn" onclick="doGoogle()">🌐 Continue with Google</button>
+      <div id="signupMsg" class="auth-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ NAV ══════════ -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">Zen<span>ova</span></div>
+  <div class="nav-links">
+    <button class="active" id="nav-home" onclick="showPage('home')">Home</button>
+    <button id="nav-chapters" onclick="showPage('chapters')">Chapters</button>
+    <button id="nav-cbt" onclick="showPage('cbt')">CBT Quiz</button>
+  </div>
+  <div class="nav-user">
+    <div class="nav-avatar" id="navAvatar">?</div>
+    <button class="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     HOME PAGE
+══════════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-badge">★ JAMB 2026 · Use of English</div>
+    <h1>Master <em>The Lekki<br>Headmaster</em></h1>
+    <p>Your complete study companion for Kabir Alabi Garba's powerful novel. Audio summaries, chapter notes, character analysis, and CBT practice — all in one place.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="showPage('chapters')">📖 Chapter Summaries</button>
+      <button class="btn-outline" onclick="showPage('cbt')">🎯 Start CBT Quiz</button>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-item"><span class="stat-num">11</span><span class="stat-label">Chapters</span></div>
+    <div class="stat-item"><span class="stat-num">90</span><span class="stat-label">CBT Questions</span></div>
+    <div class="stat-item"><span class="stat-num">3</span><span class="stat-label">Test Sections</span></div>
+    <div class="stat-item"><span class="stat-num">🎧</span><span class="stat-label">Audio Summaries</span></div>
+    <div class="stat-item"><span class="stat-num">20+</span><span class="stat-label">Characters</span></div>
+  </div>
+
+  <div class="section">
+    <div class="about-grid">
+      <div class="about-img-box">
+        <div class="book-icon">📚</div>
+        <div class="book-card">
+          <h3>The Lekki Headmaster</h3>
+          <p>A compelling novel about identity, duty, and the meaning of home.</p>
+          <span class="author-tag">Kabir Alabi Garba</span>
+        </div>
+      </div>
+      <div>
+        <span class="section-tag">About the Novel</span>
+        <h2>A Story for Every Nigerian</h2>
+        <p>The novel follows Mr. Bepo Adewale, the beloved principal of Stardom Schools in Lekki, Lagos. Torn between his family abroad and his duty to education at home, his journey reflects the universal struggle of purpose, sacrifice, and belonging.</p>
+        <br>
+        <p>Written by seasoned journalist and author <strong>Kabir Alabi Garba</strong>, this JAMB-prescribed text is a tribute to teachers — the real builders of the nation.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--off-white);padding:1px 0;">
+    <div class="section">
+      <span class="section-tag">Major Themes</span>
+      <h2>What the Novel Explores</h2>
+      <div class="themes-grid">
+        <div class="theme-card"><span class="theme-icon">✈️</span><h4>Migration (Japa)</h4><p>The emotional and moral dilemmas faced by Nigerians seeking better lives abroad.</p></div>
+        <div class="theme-card"><span class="theme-icon">📚</span><h4>Education</h4><p>Passion for teaching and the failures of Nigeria's educational system.</p></div>
+        <div class="theme-card"><span class="theme-icon">⚖️</span><h4>Integrity</h4><p>Bepo's constant rejection of corruption and unethical practices.</p></div>
+        <div class="theme-card"><span class="theme-icon">👨‍👩‍👧</span><h4>Family vs. Purpose</h4><p>The conflict between family obligations and professional calling.</p></div>
+        <div class="theme-card"><span class="theme-icon">🇳🇬</span><h4>National Identity</h4><p>Love for Nigeria and cultural heritage versus the lure of the West.</p></div>
+        <div class="theme-card"><span class="theme-icon">🌍</span><h4>Community</h4><p>The power of belonging and collective support in achieving success.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARACTERS -->
+  <div class="chars-section">
+    <div class="chars-inner">
+      <span class="section-tag">Complete Cast</span>
+      <h2>All Characters</h2>
+      <p>Everyone who appears in The Lekki Headmaster by Kabir Alabi Garba.</p>
+
+      <div class="chars-group-label">⭐ Major Characters</div>
+      <div class="chars-grid">
+        <div class="char-card"><div class="char-avatar">👨‍🏫</div><h4>Mr. Bepo Adewale</h4><div class="char-role">Protagonist · Principal</div><p>The dedicated headmaster torn between his family in the UK and his duty to education in Nigeria.</p></div>
+        <div class="char-card"><div class="char-avatar">👩‍⚕️</div><h4>Mrs. Seri Adewale</h4><div class="char-role">Bepo's Wife</div><p>A nurse settled in the UK who strongly supports and pressures Bepo to relocate and join the family.</p></div>
+        <div class="char-card"><div class="char-avatar">💼</div><h4>Mrs. Ibidun Gloss</h4><div class="char-role">Owner / Managing Director</div><p>Business-minded and strict MD of Stardom Schools. Her priorities often clash with Bepo's educational ideals.</p></div>
+      </div>
+
+      <div class="chars-group-label">👨‍🏫 School Staff</div>
+      <div class="chars-grid">
+        <div class="char-card"><div class="char-avatar">👩‍💼</div><h4>Mrs. Grace Apeh</h4><div class="char-role">Vice Principal</div><p>Calm and supportive. Steps in to manage the school during Bepo's breakdown at the assembly.</p></div>
+        <div class="char-card"><div class="char-avatar">🎨</div><h4>Mr. Audu</h4><div class="char-role">Fine Arts Teacher</div><p>Outspoken and humorous. Uses wit to defuse staff tensions. Would leave Nigeria instantly for the UK.</p></div>
+        <div class="char-card"><div class="char-avatar">📝</div><h4>Mr. Fafore</h4><div class="char-role">English Teacher</div><p>Central to the grammar controversy. Bepo defends him, demonstrating intellectual integrity.</p></div>
+        <div class="char-card"><div class="char-avatar">✝️</div><h4>Pastor Wande</h4><div class="char-role">Physics Teacher</div><p>Also acts as a spiritual guide in the school community. Balances science and faith.</p></div>
+        <div class="char-card"><div class="char-avatar">👩‍🏫</div><h4>Miss Damilola</h4><div class="char-role">Young Teacher</div><p>Represents the struggles of newer, younger staff navigating a competitive school environment.</p></div>
+        <div class="char-card"><div class="char-avatar">🧑‍💼</div><h4>Mr. Ojo</h4><div class="char-role">Staff Member</div><p>Involved in general school affairs and the daily dynamics of Stardom Schools.</p></div>
+      </div>
+
+      <div class="chars-group-label">🎓 Students</div>
+      <div class="chars-grid">
+        <div class="char-card"><div class="char-avatar">✍️</div><h4>Ikenna Egbu</h4><div class="char-role">Outstanding Student</div><p>Intelligent and creative, especially in poetry. A standout student who represents academic excellence at Stardom.</p></div>
+        <div class="char-card"><div class="char-avatar">👥</div><h4>Senior Students</h4><div class="char-role">Student Body</div><p>A group representing academic pressure, school culture, and the future generation Bepo fights to serve.</p></div>
+      </div>
+
+      <div class="chars-group-label">👨‍👩‍👧‍👦 Parents & External Characters</div>
+      <div class="chars-grid">
+        <div class="char-card"><div class="char-avatar">👩</div><h4>Mrs. Ignatius</h4><div class="char-role">Parent</div><p>Involved in a major family conflict — a DNA paternity issue that creates significant drama in the novel.</p></div>
+        <div class="char-card"><div class="char-avatar">👨</div><h4>Mr. Ibe Ignatius</h4><div class="char-role">Parent</div><p>Mrs. Ignatius's husband, central to the family/DNA conflict subplot that tests Bepo's leadership.</p></div>
+        <div class="char-card"><div class="char-avatar">👪</div><h4>Other Parents</h4><div class="char-role">Parent Community</div><p>Represent societal pressure on education, school standards, and the aspirations of Nigerian families.</p></div>
+      </div>
+
+      <div class="chars-group-label">👨‍👩‍👧 Family Members</div>
+      <div class="chars-grid">
+        <div class="char-card"><div class="char-avatar">👧</div><h4>Nike Adewale</h4><div class="char-role">Bepo's Daughter</div><p>Living in the UK with her mother Seri. Her absence from Nigeria deepens Bepo's emotional conflict.</p></div>
+        <div class="char-card"><div class="char-avatar">👧</div><h4>Kike Adewale</h4><div class="char-role">Bepo's Child</div><p>Also living in the UK. Both children represent the cost of migration on Nigerian family unity.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOCIAL MEDIA -->
+  <div class="social-section">
+    <div class="social-inner">
+      <span class="section-tag" style="background:var(--navy)">Connect With Us</span>
+      <h2>Follow Zenova</h2>
+      <p>Stay updated with study tips, summaries, and JAMB prep content across all our platforms.</p>
+      <div class="social-grid">
+        <a href="https://instagram.com/zenovastudy" target="_blank" class="social-btn"><span class="s-icon">📸</span>Instagram</a>
+        <a href="https://web.facebook.com/profile.php?id=61588573439813" target="_blank" class="social-btn"><span class="s-icon">👥</span>Facebook</a>
+        <a href="https://tiktok.com/@zenova.study" target="_blank" class="social-btn"><span class="s-icon">🎵</span>TikTok (Main)</a>
+        <a href="https://tiktok.com/@zenovastudy" target="_blank" class="social-btn"><span class="s-icon">🎵</span>TikTok (Backup)</a>
+        <a href="https://www.youtube.com/@zenovastudy" target="_blank" class="social-btn"><span class="s-icon">▶️</span>YouTube</a>
+        <a href="https://whatsapp.com/channel/0029VbCH1j60wak1HKVmfG3I" target="_blank" class="social-btn"><span class="s-icon">💬</span>WhatsApp Community</a>
+        <a href="https://emmanueljohndev17-afk.github.io/ZENOVAMAIN" target="_blank" class="social-btn"><span class="s-icon">🌐</span>Zenova Website</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-band">
+    <h2>Ready to Ace Your JAMB?</h2>
+    <p>90 questions across 3 test sections. Choose your level and start practicing now.</p>
+    <button class="btn-white" onclick="showPage('cbt')">Start Practice Quiz →</button>
+  </div>
+
+  <footer><p>© 2026 <span>Zenova</span> · JAMB 2026 Study Platform · The Lekki Headmaster by Kabir Alabi Garba</p></footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTERS PAGE
+══════════════════════════════════════ -->
+<div class="page" id="page-chapters">
+  <div class="page-header">
+    <h1>Chapter Summaries</h1>
+    <p>Tap any chapter to read the full summary + listen to the audio version</p>
+  </div>
+  <div class="chapters-container" id="chaptersContainer"></div>
+  <footer><p>© 2026 <span>Zenova</span> · JAMB 2026 Study Platform</p></footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     CBT PAGE
+══════════════════════════════════════ -->
+<div class="page" id="page-cbt">
+  <div class="page-header">
+    <h1>CBT Practice Quiz</h1>
+    <p>3 sections · 30 questions each · 90 total · JAMB-style instant feedback</p>
+  </div>
+  <div class="cbt-container">
+    <div id="sectionPicker">
+      <div class="section-picker">
+        <div class="section-card s1" onclick="startSection(0)">
+          <div class="sc-icon">📘</div>
+          <div class="sc-label">Section</div>
+          <div class="sc-title">Test 1</div>
+          <div class="sc-desc">Plot, characters, and setting. Foundation questions for every candidate.</div>
+          <span class="sc-badge">30 Questions</span>
+        </div>
+        <div class="section-card s2" onclick="startSection(1)">
+          <div class="sc-icon">📙</div>
+          <div class="sc-label">Section</div>
+          <div class="sc-title">Test 2</div>
+          <div class="sc-desc">Themes, motifs, and deeper analysis. Perfect for intermediate revision.</div>
+          <span class="sc-badge">30 Questions</span>
+        </div>
+        <div class="section-card s3" onclick="startSection(2)">
+          <div class="sc-icon">📗</div>
+          <div class="sc-label">Section</div>
+          <div class="sc-title">Test 3</div>
+          <div class="sc-desc">Advanced comprehension, language use, and critical thinking. Exam-ready.</div>
+          <span class="sc-badge">30 Questions</span>
+        </div>
+      </div>
+    </div>
+    <div id="quizSection">
+      <button class="quiz-back-btn" onclick="backToSections()">← Back to Sections</button>
+      <div class="cbt-info-bar" id="cbtInfoBar"></div>
+      <div class="cbt-progress-bar"><div class="cbt-progress-fill" id="progressFill"></div></div>
+      <div id="quizArea"></div>
+      <div id="scoreCard" class="score-card"></div>
+      <div class="cbt-controls" id="cbtControls">
+        <button class="btn-nav" id="btnPrev" onclick="navigate(-1)" disabled>← Prev</button>
+        <span id="pageIndicator" style="font-size:0.86rem;color:var(--text-light);font-weight:600"></span>
+        <button class="btn-finish" id="btnNext" onclick="navigate(1)">Next →</button>
+      </div>
+    </div>
+  </div>
+  <footer><p>© 2026 <span>Zenova</span> · JAMB 2026 Study Platform</p></footer>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBBIMcBigFULLqiiwg6AR2mr6sQQ0o0AGY",
+  authDomain: "zenova-lekki.firebaseapp.com",
+  projectId: "zenova-lekki",
+  storageBucket: "zenova-lekki.firebasestorage.app",
+  messagingSenderId: "296199789197",
+  appId: "1:296199789197:web:1ef4d4ea256c342afa20c4"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+window._auth = auth;
+window._provider = provider;
+window._signOut = signOut;
+window._createUser = createUserWithEmailAndPassword;
+window._signIn = signInWithEmailAndPassword;
+window._googleSignIn = signInWithPopup;
+window._updateProfile = updateProfile;
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.getElementById('authOverlay').classList.add('hidden');
+    const initials = (user.displayName || user.email || '?')[0].toUpperCase();
+    document.getElementById('navAvatar').textContent = initials;
+  } else {
+    document.getElementById('authOverlay').classList.remove('hidden');
+  }
+});
+</script>
+
+<script>
+// ── AUTH FUNCTIONS ──
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='signup'&&i===1)));
+  document.getElementById('loginForm').style.display = tab==='login'?'flex':'none';
+  document.getElementById('signupForm').style.display = tab==='signup'?'flex':'none';
+}
+function msg(id,txt,ok){const el=document.getElementById(id);el.textContent=txt;el.className='auth-msg'+(ok?' ok':'');}
+
+async function doLogin() {
+  const e=document.getElementById('loginEmail').value.trim();
+  const p=document.getElementById('loginPass').value;
+  try { await window._signIn(window._auth, e, p); }
+  catch(err){ msg('loginMsg', friendlyError(err.code)); }
+}
+async function doSignup() {
+  const n=document.getElementById('signupName').value.trim();
+  const e=document.getElementById('signupEmail').value.trim();
+  const p=document.getElementById('signupPass').value;
+  if(!n){msg('signupMsg','Please enter your name.');return;}
+  try {
+    const cred = await window._createUser(window._auth, e, p);
+    await window._updateProfile(cred.user, {displayName: n});
+    document.getElementById('navAvatar').textContent = n[0].toUpperCase();
+  } catch(err){ msg('signupMsg', friendlyError(err.code)); }
+}
+async function doGoogle() {
+  try { await window._googleSignIn(window._auth, window._provider); }
+  catch(err){ msg('loginMsg', friendlyError(err.code)); msg('signupMsg', friendlyError(err.code)); }
+}
+async function doLogout() {
+  await window._signOut(window._auth);
+}
+function friendlyError(code){
+  const map={'auth/invalid-email':'Invalid email address.','auth/user-not-found':'No account found.','auth/wrong-password':'Incorrect password.','auth/email-already-in-use':'Email already registered.','auth/weak-password':'Password too short (min 6 chars).','auth/popup-closed-by-user':'Sign-in cancelled.','auth/invalid-credential':'Invalid email or password.'};
+  return map[code]||'Something went wrong. Try again.';
+}
+
+// ── PAGE NAV ──
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  window.scrollTo(0,0);
+  if(name==='chapters') buildChapters();
+}
+
+// ── CHAPTER DATA ──
+const chapters = [
+  {num:1, title:'Dusk', sub:'The assembly breakdown that starts it all', audio:'1.mp3',
+   body:`<p>The novel opens dramatically at Stardom Schools, a prestigious institution in Lekki, Lagos. During the morning assembly — an event Mr. Bepo Adewale is known to lead with energy and inspiration — something is terribly wrong. The usually vibrant and witty principal takes the microphone but cannot speak. He breaks down in tears in front of hundreds of stunned students and staff.</p>
+   <p>Vice Principal Mrs. Grace Apeh quickly steps in, asking staff to escort Mr. Bepo to his office. The school nurse attends to him. Everyone is confused — this man, nicknamed "The Lekki Headmaster" for his charisma and wit, has never shown such vulnerability. The chapter establishes deep intrigue: what could bring such a composed leader to tears?</p>
+   <p>Students whisper. Teachers exchange worried glances. The assembly disperses in stunned silence. The title "Dusk" is symbolic — it represents the twilight of Bepo's era at Stardom Schools, a setting sun on a chapter of his life.</p>`,
+   tags:['Assembly breakdown','Introduction of Bepo','Mystery established','Mrs. Apeh introduced']},
+
+  {num:2, title:'The Confession', sub:"Bepo's secret is finally revealed", audio:'2.mp3',
+   body:`<p>After five days of silence and obvious emotional distress, Mr. Bepo finally opens up to his closest colleagues. The secret he has been carrying: he is leaving Nigeria for the United Kingdom. His wife Seri — a nurse — and their two children, Nike and Kike, are already settled there. He has secured a teaching job in London.</p>
+   <p>This chapter also explains the origin of his nickname. When Bepo served as headmaster at Stardom Kiddies, he used to entertain pupils by imitating characters from the classic Nigerian TV drama "Village Headmaster." The name stuck affectionately. His colleagues are baffled by his reluctance to leave — a teaching salary of £3,600 monthly compared to Nigeria's ₦400,000.</p>
+   <p>Mr. Audu jokes he would head to the airport immediately. The contrast highlights the economic desperation driving Nigeria's brain drain. Yet Bepo is heartbroken at the thought of abandoning his students.</p>`,
+   tags:['Japa decision revealed','Origin of nickname','Brain drain theme','Colleagues reactions']},
+
+  {num:3, title:'Beesway School', sub:'Early career and confronting corruption', audio:'3.mp3',
+   body:`<p>Through flashbacks, the chapter explores Bepo's earlier career at Beesway Group of Schools. Here, Bepo witnesses something that shakes him to his core: the school's director appears to be involved in ritualism, with a disturbing scene involving a cow. Bepo's moral compass refuses to allow him to stay silent or complicit.</p>
+   <p>This episode becomes one of the defining moments of his character — a man who will not compromise on ethics regardless of the professional cost. He eventually clashes with the director and leaves the school. His integrity is not merely theoretical; he has paid real professional prices for it.</p>
+   <p>We also learn about his entrepreneurial dreams — he once tried to run a small school with a colleague, but the venture failed due to financial constraints and environmental challenges. These failures add layers to his complex character.</p>`,
+   tags:['Ritualism at Beesway','Integrity vs. compromise','Entrepreneurial failure','Character backstory']},
+
+  {num:4, title:'Three Migration Tales', sub:'Stories of Nigerians who went abroad', audio:'4.mp3',
+   body:`<p>Bepo begins to research and hear stories about Nigerians who have emigrated. This chapter paints a complex, nuanced picture of the Japa phenomenon. He hears about the hourly wage system in the UK and USA — some earning $150–$250 per day — which seems extraordinary compared to Nigerian salaries.</p>
+   <p>But the stories are not all rosy. Bepo's friend Akindele shares a sobering tale: even retired permanent secretaries end up as casual workers in America, sometimes elderly people struggling as mail sorters. Akindele warns that the Western system is ruthless — you must earn every cent.</p>
+   <p>Sola, a former Stardom teacher now in the UK, reassures Bepo his situation is convenient since his wife is already established. The character Riike represents a potential success story. Through these three tales, the novel refuses to simplify the migration debate.</p>`,
+   tags:['Migration stories','Akindele warning','Sola reassurance','Japa complexity']},
+
+  {num:5, title:'A Case of Visa Denied', sub:'Bureaucratic obstacles and resilience', audio:'5.mp3',
+   body:`<p>Just as Bepo begins preparing to leave, he faces a painful bureaucratic hurdle: passport and visa complications. The chapter takes him on a frustrating journey from Lagos to Ibadan for passport renewal, navigating the notoriously inefficient Nigerian immigration system. The Lagos–Ibadan Expressway symbolically represents Nigeria's infrastructure challenges.</p>
+   <p>The visa application process proves gruelling. This chapter serves as a critique of Nigeria's public administration — even when Nigerians want to leave, the system makes it unnecessarily difficult. Bepo's resilience is tested as he encounters delays, queues, and bureaucratic indifference.</p>
+   <p>The chapter deepens the irony: a country that cannot retain its talent, yet still creates obstacles for those trying to leave. Despite everything, he presses on, determined to complete the process and reunite with his family.</p>`,
+   tags:['Passport renewal','Bureaucracy critique','Lagos–Ibadan Expressway','System failures']},
+
+  {num:6, title:"Stardom's Internal Drama", sub:'School politics, grammar disputes & corruption', audio:'6.mp3',
+   body:`<p>While Bepo processes his departure plans, life at Stardom Schools continues with its own dramas. Mrs. Ibidun Gloss, the Managing Director, is portrayed as someone who sees the school primarily as a business, often clashing with Bepo's educational ideals.</p>
+   <p>A memorable subplot involves a grammar dispute between staff, with Mr. Fafore at the centre. Bepo defends Mr. Fafore's position based on linguistic correctness, demonstrating his intellectual integrity even when it means opposing management. Mr. Audu's jokes during this episode provide comic relief while mediating tension.</p>
+   <p>The chapter exposes the school's financial strategies — restructuring boarding fees (lowering from ₦250,000 to ₦165,000 while raising other fees). Corruption within the staff cooperative, revealed by Mr. Jeremi Amos, adds another layer of institutional rot.</p>`,
+   tags:['Grammar dispute','Mrs. Gloss vs. Bepo','Fee restructuring','Cooperative corruption']},
+
+  {num:7, title:'The Invention Club & Excursions', sub:"Bepo's legacy of student empowerment", audio:'7.mp3',
+   body:`<p>This chapter showcases Bepo at his finest as an educator. He has established an Invention Club at Stardom Schools, encouraging students to think creatively, innovate, and solve real-world problems. Through this initiative, he nurtures young minds to see beyond textbooks.</p>
+   <p>School excursions play a significant role in his pedagogy. He believes students learn as much outside the classroom as inside it, and organises trips that expose them to history, culture, and the broader Nigerian experience. Student Ikenna Egbu shines during this period with his creative poetry and ideas.</p>
+   <p>The chapter highlights Bepo's mentorship style — he remembers students' names, their struggles, their potential. His relationship with his students is the source of his deepest conflict about leaving Nigeria.</p>`,
+   tags:['Invention Club','Student mentorship','Ikenna Egbu','Educational philosophy']},
+
+  {num:8, title:'The Black Heritage Museum', sub:'History, slavery, and a disturbing dream', audio:'8.mp3',
+   body:`<p>Bepo visits the Black Heritage Museum in Badagry, a powerful site commemorating Nigeria's colonial past and the transatlantic slave trade. Surrounded by the history of Africans forcibly taken from their homeland, Bepo begins to draw uncomfortable parallels with modern Japa.</p>
+   <p>That night, he has a haunting dream in which he sees himself among the enslaved Africans being marched to the slave ships. The dream is his subconscious speaking: is modern Japa so different from historical slavery? Are educated Nigerians enriching already-developed countries with their talents, just as slaves enriched them with their labour?</p>
+   <p>This chapter elevates the novel from a personal story to a broader social commentary. It is the novel's philosophical centrepiece, challenging readers to think about loyalty, exploitation, and what it truly means to move forward as a nation.</p>`,
+   tags:['Badagry museum','Slavery parallel','Dream sequence','Japa as neo-colonialism']},
+
+  {num:9, title:'The Grand Farewell', sub:'Football, debates, dance, and goodbye', audio:'9.mp3',
+   body:`<p>Stardom Schools organises an elaborate, multi-day farewell for Bepo. The event is a celebration of his 24+ years of service. A hilarious staff-versus-student football match kicks off the festivities, giving the chapter a joyful, bittersweet tone.</p>
+   <p>Students stage a debate on arts versus sciences — a topic Bepo has always championed. Cultural performances follow: traditional dances, music, and dramatic presentations that reflect Nigeria's rich heritage. Ikenna Egbu gives a moving spoken word piece.</p>
+   <p>Emotional speeches are given by staff, students, and parents. Each tribute reveals a different facet of Bepo's impact. The chapter is simultaneously joyful and deeply sad — a celebration masking grief. Bepo's growing doubt about leaving becomes palpable.</p>`,
+   tags:['Football match','Arts vs. sciences debate','Cultural performances','Community tributes']},
+
+  {num:10, title:'The Airport', sub:'At the point of no return — or is it?', audio:'10.mp3',
+   body:`<p>Bepo arrives at the airport with his luggage, his ticket, and a heart heavy with conflict. As he moves through the departure process, the weight of what he is doing intensifies. He thinks of his students, the school's morning assemblies, his Invention Club, the faces of young Nigerians who look up to him.</p>
+   <p>The airport scenes are tense and introspective. Bepo observes other travellers — some excited, some anxious — each carrying their own reasons for leaving Nigeria. He reflects on his dream at Badagry, on the migration stories he heard, on his wife and children waiting in the UK.</p>
+   <p>At a critical moment, something shifts inside him. The pull of Nigeria — of purpose, of unfinished work, of meaning — becomes overwhelming. This is the novel's climax: the moment of ultimate decision.</p>`,
+   tags:['Climax','Inner conflict','Moment of decision','Patriotism']},
+
+  {num:11, title:'Return', sub:'The surprising, inspiring conclusion', audio:'11.mp3',
+   body:`<p>In a surprising and deeply moving turn, Bepo does not board the plane. He turns around. He returns to Stardom Schools, declaring that his heart and his mission remain in Nigeria. The school community — staff, students, parents — erupts in joyous welcome when they see him walk back through the gates.</p>
+   <p>The resolution is not presented as a rejection of his family, but as a recognition of deeper purpose. Bepo understands that his calling as an educator in Nigeria matters in a way that cannot be replicated in the UK. His return is an act of patriotism and self-knowledge.</p>
+   <p>The novel closes on an inspiring note. Bepo resumes his role, the school continues, and the reader is left with the powerful message that true success lies in making a difference where it matters most.</p>`,
+   tags:['Surprising return','Purpose over comfort','Patriotism','Resolution']},
+];
+
+// Audio state
+const audioState = {};
+function buildChapters() {
+  const cont = document.getElementById('chaptersContainer');
+  if(cont.dataset.built) return;
+  cont.dataset.built = 'yes';
+  cont.innerHTML = chapters.map((ch,i) => `
+    <div class="chapter-card" id="cc${i}">
+      <div class="chapter-header" onclick="toggleChapter(${i})">
+        <div class="chapter-left">
+          <div class="chapter-num">${ch.num}</div>
+          <div>
+            <div class="chapter-title">${ch.title}</div>
+            <div class="chapter-subtitle">${ch.sub}</div>
+          </div>
+        </div>
+        <div class="chapter-toggle" id="ct${i}">▼</div>
+      </div>
+      <div class="chapter-body" id="cb${i}">
+        <div class="chapter-body-inner">
+          <div class="audio-player" id="ap${i}">
+            <button class="audio-play-btn" id="apb${i}" onclick="toggleAudio(${i}, event)">▶</button>
+            <div class="audio-info">
+              <div class="audio-title">🎧 Audio Summary – Chapter ${ch.num}: ${ch.title}</div>
+              <div class="audio-progress-wrap">
+                <div class="audio-bar" id="abar${i}" onclick="seekAudio(${i}, event)">
+                  <div class="audio-fill" id="afill${i}"></div>
+                </div>
+                <div class="audio-time" id="atime${i}">0:00</div>
+              </div>
+            </div>
+            <audio id="aud${i}" src="${ch.audio}" preload="none"></audio>
+          </div>
+          ${ch.body}
+          <div class="chapter-key">${ch.tags.map(t=>`<span class="key-tag">${t}</span>`).join('')}</div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  chapters.forEach((_,i) => {
+    const aud = document.getElementById('aud'+i);
+    aud.addEventListener('timeupdate', () => {
+      if(!aud.duration) return;
+      const pct = (aud.currentTime/aud.duration)*100;
+      document.getElementById('afill'+i).style.width = pct+'%';
+      document.getElementById('atime'+i).textContent = fmt(aud.currentTime)+' / '+fmt(aud.duration);
+    });
+    aud.addEventListener('ended', () => {
+      document.getElementById('apb'+i).textContent = '▶';
+    });
+  });
+}
+
+function fmt(s){return Math.floor(s/60)+':'+(Math.floor(s%60)+'').padStart(2,'0');}
+
+function toggleAudio(i, e) {
+  e.stopPropagation();
+  const aud = document.getElementById('aud'+i);
+  const btn = document.getElementById('apb'+i);
+  // pause all others
+  chapters.forEach((_,j)=>{ if(j!==i){ document.getElementById('aud'+j).pause(); document.getElementById('apb'+j).textContent='▶'; }});
+  if(aud.paused){ aud.play(); btn.textContent='⏸'; }
+  else { aud.pause(); btn.textContent='▶'; }
+}
+
+function seekAudio(i, e) {
+  e.stopPropagation();
+  const aud = document.getElementById('aud'+i);
+  const bar = document.getElementById('abar'+i);
+  const rect = bar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  if(aud.duration) aud.currentTime = pct * aud.duration;
+}
+
+function toggleChapter(i) {
+  const card = document.getElementById('cc'+i);
+  const body = document.getElementById('cb'+i);
+  const tog = document.getElementById('ct'+i);
+  const isOpen = card.classList.contains('open');
+  // close all
+  chapters.forEach((_,j)=>{
+    document.getElementById('cc'+j).classList.remove('open');
+    document.getElementById('cb'+j).style.maxHeight = '0';
+    document.getElementById('ct'+j).style.transform = '';
+    document.getElementById('ct'+j).style.color = '';
+  });
+  if(!isOpen){
+    card.classList.add('open');
+    body.style.maxHeight = body.scrollHeight + 200 + 'px';
+    tog.style.transform = 'rotate(180deg)';
+    tog.style.color = 'var(--accent)';
+    card.querySelector('.chapter-header').style.borderBottom = '1.5px solid var(--gray-light)';
+  }
+}
+
+// ══════════════════════════════
+// CBT DATA – 3 SECTIONS × 30 Qs
+// ══════════════════════════════
+const allSections = [
+  // ── SECTION 1 ──
+  {name:'Test 1', color:'var(--accent)', qs:[
+    {q:"What unusual event opens the novel at Stardom Schools?",opts:["A fight between students","Mr. Bepo breaks down in tears at assembly","A fire alarm during class","A surprise inspection"],ans:1,diff:"easy",exp:"The novel opens with Mr. Bepo breaking down in tears during the morning assembly, shocking both students and staff."},
+    {q:"Who is the protagonist of The Lekki Headmaster?",opts:["Mr. Audu","Mrs. Ibidun Gloss","Mr. Bepo Adewale","Mrs. Grace Apeh"],ans:2,diff:"easy",exp:"Mr. Bepo Adewale is the protagonist — the principal of Stardom Schools whose dilemma about migrating drives the entire novel."},
+    {q:"How did Mr. Bepo earn his famous nickname?",opts:["He built schools across Lekki","He won a national teaching award","He imitated characters from 'Village Headmaster'","He was the first headmaster in Lekki"],ans:2,diff:"medium",exp:"Bepo used to entertain pupils at Stardom Kiddies by imitating characters from the classic TV drama 'Village Headmaster.'"},
+    {q:"Where is Stardom Schools located?",opts:["Ikeja, Lagos","Victoria Island, Lagos","Lekki, Lagos","Surulere, Lagos"],ans:2,diff:"easy",exp:"Stardom Schools is located in Lekki, Lagos — described as a prestigious A-List institution."},
+    {q:"What is the profession of Bepo's wife Seri?",opts:["A teacher","A lawyer","An engineer","A nurse"],ans:3,diff:"easy",exp:"Seri Adewale is a nurse who has already settled in the UK with their children."},
+    {q:"What are the names of Bepo and Seri's children?",opts:["Tunde and Taiwo","Nike and Kike","Bisi and Bola","Ade and Ada"],ans:1,diff:"easy",exp:"Bepo and Seri's two children are Nike and Kike, both living in the UK with their mother."},
+    {q:"Who is the Managing Director of Stardom Schools?",opts:["Mrs. Grace Apeh","Mrs. Ibidun Gloss","Mr. Audu","Mr. Fafore"],ans:1,diff:"medium",exp:"Mrs. Ibidun Gloss is the Managing Director of Stardom Schools."},
+    {q:"What subject does Mr. Audu teach?",opts:["English Language","Mathematics","Fine Arts","Physics"],ans:2,diff:"medium",exp:"Mr. Audu teaches Fine Arts and is known for his outspoken and humorous personality."},
+    {q:"What subject does Pastor Wande teach?",opts:["Biology","Chemistry","Geography","Physics"],ans:3,diff:"medium",exp:"Pastor Wande teaches Physics and also serves as a spiritual guide to the school community."},
+    {q:"What subject is Mr. Fafore associated with?",opts:["Fine Arts","English","Mathematics","History"],ans:1,diff:"medium",exp:"Mr. Fafore is the English teacher who becomes central to the grammar controversy at Stardom Schools."},
+    {q:"Who steps in to manage the assembly after Bepo breaks down?",opts:["Mr. Audu","Mr. Fafore","Mrs. Grace Apeh","Mrs. Ibidun Gloss"],ans:2,diff:"easy",exp:"Vice Principal Mrs. Grace Apeh steps in to manage the situation and escorts Bepo to his office."},
+    {q:"What was Mr. Audu's reaction to Bepo's UK opportunity?",opts:["He encouraged Bepo to stay","He said he'd head to the airport immediately","He offered to take Bepo's place","He cried with Bepo"],ans:1,diff:"medium",exp:"Mr. Audu joked he would 'head to the airport right now' — highlighting why many Nigerians choose to leave."},
+    {q:"What unethical practice did Bepo witness at Beesway Group of Schools?",opts:["Exam malpractice","Financial fraud","Ritualism involving a cow","Students being abused"],ans:2,diff:"medium",exp:"At Beesway, Bepo witnessed a disturbing ritual involving a cow by the school's director."},
+    {q:"Approximately how much would Bepo earn monthly in the UK?",opts:["£1,200","£3,600","£5,000","£800"],ans:1,diff:"medium",exp:"The novel mentions Bepo would earn approximately £3,600 monthly in the UK."},
+    {q:"What site does Bepo visit that triggers his comparison of Japa to slavery?",opts:["National Museum Lagos","Black Heritage Museum Badagry","Slave Coast Calabar","Benin Royal Palace"],ans:1,diff:"medium",exp:"Bepo visits the Black Heritage Museum in Badagry, which triggers his comparison of modern migration to the slave trade."},
+    {q:"What is the title of the first chapter?",opts:["Dawn","Dusk","The Confession","Departure"],ans:1,diff:"easy",exp:"'Dusk' is the first chapter — symbolising the twilight of Bepo's era at Stardom Schools."},
+    {q:"What student is described as creative and outstanding in poetry?",opts:["Mr. Fafore","Miss Damilola","Ikenna Egbu","Mr. Ojo"],ans:2,diff:"medium",exp:"Ikenna Egbu is the intelligent, creative student known especially for his poetry at Stardom Schools."},
+    {q:"What parent-related drama involves a DNA paternity issue?",opts:["The Adewales","The Ignatius family","The Gloss family","The Audu family"],ans:1,diff:"hard",exp:"Mr. and Mrs. Ibe Ignatius are central to the DNA paternity conflict — a major subplot in the novel."},
+    {q:"Who is Miss Damilola?",opts:["A parent","The school nurse","A young teacher representing newer staff struggles","A senior student"],ans:2,diff:"medium",exp:"Miss Damilola is a young teacher who represents the challenges faced by newer staff at Stardom Schools."},
+    {q:"How long did Bepo serve as Headmaster at Stardom Kiddies?",opts:["Two years","Four years","Six years","Ten years"],ans:1,diff:"medium",exp:"Bepo served as Headmaster at Stardom Kiddies for four years, during which he earned his famous nickname."},
+    {q:"What does the term 'Japa' mean?",opts:["To study hard","To run or escape (migrating abroad)","To build a school","To return home"],ans:1,diff:"easy",exp:"'Japa' is Yoruba slang meaning 'to run/escape,' used to describe Nigerians migrating abroad for better opportunities."},
+    {q:"What surprise does Bepo do at the airport?",opts:["He calls his wife","He loses his passport","He turns back and returns to Stardom","He takes a later flight"],ans:2,diff:"medium",exp:"In the novel's most powerful moment, Bepo abandons his plan at the airport and returns to Stardom Schools."},
+    {q:"What special club did Bepo establish at Stardom Schools?",opts:["The Debate Society","The Invention Club","The Science Fair","The Drama Guild"],ans:1,diff:"medium",exp:"Bepo established the Invention Club, encouraging students to think creatively and innovate."},
+    {q:"Who is the author of The Lekki Headmaster?",opts:["Chinua Achebe","Wole Soyinka","Kabir Alabi Garba","Chimamanda Ngozi Adichie"],ans:2,diff:"easy",exp:"The Lekki Headmaster was written by Kabir Alabi Garba, a Nigerian journalist and author."},
+    {q:"Which exam body prescribed the novel for 2026?",opts:["WAEC","NECO","JAMB","Cambridge"],ans:2,diff:"easy",exp:"JAMB (Joint Admissions and Matriculation Board) prescribed The Lekki Headmaster for the 2026 UTME."},
+    {q:"What sport features in Bepo's farewell celebration?",opts:["Basketball","Table tennis","Football","Athletics"],ans:2,diff:"easy",exp:"A staff-versus-student football match is a highlight of Bepo's farewell celebration."},
+    {q:"What role does Mr. Ojo play in the novel?",opts:["He is the school driver","He is a staff member involved in school affairs","He is a student representative","He is Bepo's brother"],ans:1,diff:"medium",exp:"Mr. Ojo is a staff member involved in the general affairs and daily dynamics of Stardom Schools."},
+    {q:"What does Bepo's return to Stardom at the end represent?",opts:["His failure to get a UK visa","His fear of flying","His commitment to his mission and country","His wife refusing to take him back"],ans:2,diff:"medium",exp:"Bepo's return represents deep-rooted commitment to shaping Nigerian youth over personal material gain abroad."},
+    {q:"What debate topic is staged at Bepo's farewell?",opts:["Nigeria vs. UK","Arts versus Sciences","Public vs. Private schools","Teachers vs. Students"],ans:1,diff:"medium",exp:"A debate on Arts versus Sciences is staged at the farewell — reflecting Bepo's belief in a balanced curriculum."},
+    {q:"What is the novel ultimately dedicated to?",opts:["Migrant workers","All teachers committed to sound education","Nigerian politicians","School owners"],ans:1,diff:"easy",exp:"The novel is dedicated 'to all teachers committed to the cause of sound education — the real builders of the nation.'"}
+  ]},
+
+  // ── SECTION 2 ──
+  {name:'Test 2', color:'var(--gold)', qs:[
+    {q:"What does the novel's title 'Dusk' symbolise?",opts:["The beginning of a new day","The end of Bepo's teaching career forever","The twilight of Bepo's era at Stardom Schools","A time of prayer"],ans:2,diff:"hard",exp:"'Dusk' symbolises the twilight of Bepo's era at Stardom Schools — a transitional moment between one phase of life and another."},
+    {q:"What parallel does Bepo draw at the Badagry Museum?",opts:["Japa is like civil war","Modern migration is like the transatlantic slave trade","Education is like colonialism","Nigerian schools are like prisons"],ans:1,diff:"hard",exp:"Bepo draws a powerful parallel between modern Japa — educated Nigerians enriching the West — and the historical slave trade."},
+    {q:"What does Bepo's dream at Badagry reveal about him?",opts:["His excitement about the UK","His subconscious resistance to leaving Nigeria","His hatred for history","His desire to become a museum curator"],ans:1,diff:"hard",exp:"The dream, where Bepo sees himself among enslaved Africans, reveals his deep subconscious resistance and guilt about leaving Nigeria."},
+    {q:"What does the Lagos–Ibadan Expressway symbolise?",opts:["Economic prosperity","Nigeria's infrastructure challenges","The road to migration","Bepo's childhood memories"],ans:1,diff:"hard",exp:"The Lagos–Ibadan Expressway symbolises Nigeria's infrastructure challenges, especially during Bepo's frustrating passport renewal journey."},
+    {q:"How does Stardom Schools restructure fees as a business strategy?",opts:["Doubles all fees","Eliminates fees entirely","Lowers boarding fees but raises other charges","Introduces scholarships"],ans:2,diff:"hard",exp:"Stardom lowered boarding fees from ₦250,000 to ₦165,000, moving 80% of students to boarding, then raised 'Excursion and Other Items' fees by ₦93,000."},
+    {q:"What does the Invention Club represent thematically?",opts:["Bepo's desire for fame","The importance of creative education beyond textbooks","The school's business ambitions","A student rebellion"],ans:1,diff:"medium",exp:"The Invention Club represents Bepo's philosophy that true education empowers students to innovate and think critically beyond textbooks."},
+    {q:"Which character represents the complexity of modern Nigerian migration?",opts:["Mr. Audu","Akindele","Mrs. Grace Apeh","Ikenna Egbu"],ans:1,diff:"medium",exp:"Akindele represents the complex, often unglamorous reality of migration — warning Bepo that even senior Nigerians end up as casual workers abroad."},
+    {q:"What does Mrs. Ibidun Gloss's management style reveal?",opts:["A deep love of education","A business-first approach that conflicts with academic values","Support for teachers' rights","A desire for national development"],ans:1,diff:"medium",exp:"Mrs. Gloss treats Stardom Schools primarily as a business, often clashing with Bepo's student-centred educational values."},
+    {q:"What thematic conflict is at the heart of the novel?",opts:["Rich vs. poor Nigerians","Family obligation vs. national purpose","Private vs. public schools","Religion vs. education"],ans:1,diff:"medium",exp:"The central conflict is between Bepo's family obligation (joining his wife and children in the UK) and his sense of national purpose (educating Nigerian youth)."},
+    {q:"How does the grammar dispute reveal Bepo's character?",opts:["He sides with management to keep his job","He stays silent to avoid conflict","He defends Mr. Fafore based on correctness over loyalty","He punishes Mr. Fafore"],ans:2,diff:"medium",exp:"Bepo defends Mr. Fafore's grammatically correct position even when it means opposing the MD — demonstrating intellectual integrity over political convenience."},
+    {q:"What does Bepo's entrepreneurial failure in his early career show?",opts:["He is incompetent","He lacks ambition","He is a visionary who has faced real obstacles","He preferred comfort"],ans:2,diff:"medium",exp:"His failed school venture shows Bepo as a visionary with genuine ambitions to serve Nigerian education, despite systemic obstacles."},
+    {q:"What does the farewell ceremony symbolise?",opts:["The school's financial success","The power of community and the deep impact of a good educator","Students' happiness that Bepo is leaving","A political event"],ans:1,diff:"medium",exp:"The elaborate farewell symbolises the power of genuine community and testifies to the transformative impact a dedicated educator can have."},
+    {q:"What does Sola's story show about migration?",opts:["That everyone succeeds abroad","That migration is always a failure","That outcomes vary and preparation matters","That only nurses succeed in the UK"],ans:2,diff:"medium",exp:"Sola's reassuring story shows that migration outcomes vary widely depending on circumstances — it is not universally good or bad."},
+    {q:"What is the significance of Ikenna Egbu's character?",opts:["He represents academic failure","He represents the future generation Bepo fights to serve","He is the villain of the novel","He is Bepo's relative"],ans:1,diff:"medium",exp:"Ikenna Egbu — intelligent, creative, and gifted in poetry — represents the promising Nigerian youth that Bepo's departure would leave without guidance."},
+    {q:"What does the Ignatius family subplot reveal about the novel's scope?",opts:["The novel is only about school politics","The novel addresses wider societal and family issues beyond just migration","The novel focuses only on Bepo","The subplot is unrelated to education"],ans:1,diff:"hard",exp:"The DNA paternity conflict with the Ignatius family shows the novel addresses broader Nigerian societal issues — not just migration and education."},
+    {q:"Why does Pastor Wande's dual role (teacher + spiritual guide) matter?",opts:["It shows Nigerian schools are religious institutions","It adds comic relief to the story","It reflects how Nigerian professionals often carry multiple community roles","It suggests Bepo is religious"],ans:2,diff:"hard",exp:"Pastor Wande's dual role reflects the reality of Nigerian community life, where professionals often serve multiple roles beyond their formal job titles."},
+    {q:"What does Miss Damilola represent in the novel?",opts:["Experienced leadership","The struggles and vulnerabilities of newer, younger staff","Student rebellion","The school's success"],ans:1,diff:"medium",exp:"Miss Damilola represents newer staff who struggle to navigate competitive school environments — adding a generational perspective to the narrative."},
+    {q:"What does Bepo's reaction to migration stories suggest about his character?",opts:["He is naive and easily manipulated","He does thorough research and thinks critically before making decisions","He blindly follows his wife's wishes","He doesn't care about data"],ans:1,diff:"medium",exp:"Bepo's careful research into migration stories — considering both successes and failures — shows his analytical, thoughtful character."},
+    {q:"What cultural activity at the farewell reinforces the novel's theme of heritage?",opts:["A spelling bee","Traditional dances and cultural performances","A mathematics competition","A fashion show"],ans:1,diff:"medium",exp:"Traditional dances and cultural performances at the farewell reinforce the novel's theme of preserving and celebrating Nigerian cultural heritage."},
+    {q:"What literary device does Bepo's airport scene primarily employ?",opts:["Flashback","Interior monologue and reflection","Comic relief","Foreshadowing"],ans:1,diff:"hard",exp:"The airport scene employs interior monologue — Bepo's internal thoughts and reflections drive the climactic decision not to board the plane."},
+    {q:"What does the phrase 'builders of the nation' refer to in the novel?",opts:["Politicians and government officials","Teachers and educators","Engineers and architects","Business owners"],ans:1,diff:"easy",exp:"The novel celebrates teachers as 'builders of the nation' — the dedication is explicitly made to all teachers committed to sound education."},
+    {q:"How does Mr. Audu's humour function in the novel?",opts:["It mocks serious issues inappropriately","It provides comic relief while also revealing deeper truths about staff attitudes","It is merely entertainment","It undermines Bepo's authority"],ans:1,diff:"medium",exp:"Mr. Audu's humour serves double duty — providing comic relief while also revealing honest attitudes about migration and working in Nigeria."},
+    {q:"What does the school's assembly ritual at the start of the novel establish?",opts:["The school is disorganised","Stardom is a disciplined, structured institution where Bepo's breakdown is shocking","Students disrespect authority","Teachers are lazy"],ans:1,diff:"medium",exp:"The structured assembly ritual establishes Stardom as a highly disciplined institution, making Bepo's public breakdown all the more shocking and significant."},
+    {q:"What does Nike and Kike's absence from Nigeria represent?",opts:["Bepo's neglect as a father","The collateral damage migration causes to family unity","The children's rejection of Nigeria","Seri's selfishness"],ans:1,diff:"medium",exp:"Nike and Kike's presence in the UK without their father represents the fractured family unity that migration often causes."},
+    {q:"Which theme is most directly explored through the Beesway episode?",opts:["Migration","Integrity vs. corruption","Love and family","School sports"],ans:1,diff:"medium",exp:"The Beesway episode most directly explores the theme of integrity vs. corruption — Bepo refuses to stay in an institution engaged in ritualistic and unethical practices."},
+    {q:"What makes the novel relevant beyond JAMB preparation?",opts:["Its detailed description of Lagos geography","Its deep social commentary on migration, education, and national identity","Its mathematical puzzles","Its fashion descriptions"],ans:1,diff:"medium",exp:"The novel's social commentary on the Japa phenomenon, educational integrity, and national purpose makes it relevant to all Nigerians, far beyond exam preparation."},
+    {q:"What does Bepo's eventual return represent for Nigerian society?",opts:["The impossibility of success in Nigeria","A call for more Nigerians to stay and build their country","The failure of the UK education system","Bepo's stubbornness"],ans:1,diff:"medium",exp:"Bepo's return is a broader call — suggesting that Nigeria's development depends on skilled professionals choosing purpose over comfort."},
+    {q:"What narrative technique is used to reveal Bepo's backstory?",opts:["Foreshadowing","Flashbacks","Letters","Second person narration"],ans:1,diff:"medium",exp:"The novel uses flashbacks to reveal Bepo's earlier career at Beesway, his entrepreneurial ventures, and the formation of his character."},
+    {q:"What does the novel suggest about the Nigerian education system overall?",opts:["It is perfect and needs no reform","It is broken by corruption and commercialisation but sustained by dedicated individuals like Bepo","It is better than the UK system","It primarily serves the elite"],ans:1,diff:"medium",exp:"The novel presents a nuanced view: the system is flawed by corruption and commercialisation, yet sustained by passionate educators who refuse to give up on it."},
+    {q:"How does the novel balance optimism and criticism?",opts:["It is entirely pessimistic about Nigeria","It is entirely optimistic about migration","It criticises Nigeria's problems while celebrating the resilience of individuals who fight to improve it","It avoids taking any position"],ans:2,diff:"hard",exp:"The novel's balance comes through Bepo: it honestly critiques Nigeria's dysfunction while celebrating the human spirit that refuses to abandon the country."}
+  ]},
+
+  // ── SECTION 3 ──
+  {name:'Test 3', color:'var(--success)', qs:[
+    {q:"In what narrative form does the novel primarily present Bepo's past?",opts:["Dream sequences only","Letters to his wife","Flashbacks and retrospective narration","Second-person address"],ans:2,diff:"hard",exp:"The novel uses retrospective narration and flashbacks to reveal Bepo's earlier career and the formation of his moral character."},
+    {q:"The novel's dedication reads 'to all teachers committed to the cause of sound education.' What does this suggest about its primary audience?",opts:["Only students preparing for JAMB","Educators, policymakers, and anyone who values education","Only Nigerians living abroad","Only school administrators"],ans:1,diff:"hard",exp:"The dedication signals the novel speaks to a broad audience — educators, students, and anyone invested in the future of Nigerian education."},
+    {q:"Which character most directly voices the economic argument for migrating?",opts:["Bepo","Mrs. Grace Apeh","Mr. Audu","Mrs. Ibidun Gloss"],ans:2,diff:"medium",exp:"Mr. Audu most directly voices the economic argument — his joke about heading to the airport immediately for £3,600/month captures the pragmatic view."},
+    {q:"What is the symbolic significance of Bepo crying publicly at the assembly?",opts:["He is mentally unwell","His public vulnerability shows the private toll of migration decisions on Nigerian professionals","He is acting for attention","He hates the students"],ans:1,diff:"hard",exp:"Bepo's public breakdown symbolises how deeply personal migration decisions are — even the strongest leaders carry invisible private burdens."},
+    {q:"How does the novel use the Ignatius DNA subplot to enrich its themes?",opts:["It has no connection to the main themes","It shows that personal/family crises are universal, paralleling Bepo's own family conflict","It is purely for entertainment","It shows only the flaws of Nigerian parents"],ans:1,diff:"hard",exp:"The DNA subplot parallels Bepo's own family tension — showing that complex, painful family dynamics are a universal Nigerian reality, not unique to Bepo."},
+    {q:"What does the hourly wage system that Bepo learns about represent thematically?",opts:["The cruelty of Western employers","The radically different economic reality that makes migration so attractive to Nigerians","British exploitation of immigrants","A system inferior to Nigeria's"],ans:1,diff:"medium",exp:"The hourly wage system represents the dramatic economic gap between Nigerian and Western salaries — the core material driver of the Japa phenomenon."},
+    {q:"How does Kabir Alabi Garba use setting to reinforce his themes?",opts:["Setting is irrelevant in the novel","Lekki's prestige contrasts with broader Nigerian dysfunction, reinforcing inequality themes","All scenes are set in the UK","The school setting is purely decorative"],ans:1,diff:"hard",exp:"Lekki's prestige as a setting contrasts with Nigeria's broader dysfunction (bad roads, bureaucracy) — reinforcing themes of inequality and the tension between aspiration and reality."},
+    {q:"What does Bepo's refusal to leave Beesway silently (rather than confronting the director) reveal?",opts:["His cowardice","His inability to keep jobs","His active moral agency — he does not merely withdraw but stands against wrongdoing","His desire for attention"],ans:2,diff:"hard",exp:"Bepo's confrontation at Beesway reveals active moral agency — he doesn't just escape corruption quietly but actively resists it, at professional cost."},
+    {q:"The assembly at Stardom incorporates both the Nigerian National Anthem and school anthems. What does this suggest?",opts:["The school is nationalistic in an extreme way","The school cultivates both national identity and its own community culture","It is a government school","The principal chose the anthems randomly"],ans:1,diff:"medium",exp:"The combination of national anthem and school anthem suggests Stardom cultivates both Nigerian national identity and a strong sense of institutional community."},
+    {q:"What does Mr. Oje Meko's character primarily contribute to the novel?",opts:["He is a central protagonist","He represents one dimension of Nigerian professional life within the school ecosystem","He opposes Bepo directly","He has no meaningful role"],ans:1,diff:"hard",exp:"Minor characters like Mr. Oje Meko represent various dimensions of Nigerian professional life — filling out the school's ecosystem beyond the central characters."},
+    {q:"Bepo considers retirement at 55 to start a business. What does this detail reveal?",opts:["He has no loyalty to teaching","He is secretly selfish","He has concrete plans for contributing to Nigeria even after teaching — showing deep roots","He wants to escape responsibility"],ans:2,diff:"hard",exp:"His plans to retire and start a Nigerian business show he has always envisioned his future in Nigeria — making his departure all the more conflicted and painful."},
+    {q:"How does the staff cooperative corruption subplot connect to the novel's central theme?",opts:["It has no connection","It shows that even small Nigerian institutions are vulnerable to the same corruption Bepo fights — making departure more tempting","It only adds drama","It shows staff are generally dishonest"],ans:1,diff:"hard",exp:"The cooperative corruption reinforces why educated Nigerians like Bepo feel pushed to leave — institutional rot pervades even small community structures."},
+    {q:"What rhetorical question does Bepo implicitly ask at Badagry?",opts:["Why did colonialism happen?","Is leaving Nigeria for the West really so different from the historical enslavement of Africans?","Should Nigeria abolish museums?","Why do Nigerians travel?"],ans:1,diff:"hard",exp:"Bepo implicitly asks: is voluntarily enriching already-developed Western nations with Nigerian talent morally different from the involuntary exploitation of the slave era?"},
+    {q:"What is the dramatic irony in Bepo's farewell celebration?",opts:["Staff pretend to be sad but are happy he's leaving","The celebration is planned while Bepo has already secretly decided to stay","The audience knows Bepo will return but Bepo does not yet","There is no dramatic irony"],ans:2,diff:"hard",exp:"There is potential dramatic irony in that the elaborate farewell — meant as a final goodbye — ends up being unnecessary, as Bepo returns."},
+    {q:"How does the novel portray Mrs. Grace Apeh as a foil to Mrs. Ibidun Gloss?",opts:["They are identical characters","Apeh's calm, supportive leadership contrasts with Gloss's business-driven, controlling management style","Apeh is more corrupt than Gloss","Gloss is kinder than Apeh"],ans:1,diff:"hard",exp:"Apeh (calm, supportive, people-centred) and Gloss (business-driven, controlling) function as foils — representing two opposing models of institutional leadership."},
+    {q:"What does the novel suggest about brain drain through Bepo's story?",opts:["Brain drain is always beneficial for individuals","Brain drain causes irreversible harm — good leaders leaving creates voids that harm institutions","Brain drain is only an economic issue","Brain drain has no real consequences"],ans:1,diff:"medium",exp:"Through Bepo's story, the novel suggests brain drain creates irreplaceable voids in Nigerian institutions — good leaders taking their irreplaceable skills abroad."},
+    {q:"In what way is the novel's resolution (Bepo returning) both satisfying and complicated?",opts:["It is only satisfying with no complications","It is satisfying for national spirit but raises questions about Bepo's marriage and family","It is only complicated with no satisfaction","It doesn't resolve the central conflict"],ans:1,diff:"hard",exp:"Bepo's return satisfies the patriotic/professional narrative but leaves the family conflict unresolved — his wife and children remain in the UK."},
+    {q:"What does Ikenna Egbu's poetry represent thematically?",opts:["Academic pressure without creativity","The creative potential of Nigerian youth that quality education can unlock","The superiority of arts over sciences","A critique of Bepo's teaching"],ans:1,diff:"medium",exp:"Ikenna's poetry represents the creative potential that flourishes under Bepo's nurturing leadership — exactly what brain drain would deprive Nigeria of."},
+    {q:"How does the novel treat the concept of 'home'?",opts:["Home is simply where your family is","Home is exclusively Nigeria","Home is a complex concept — both a physical place and a sense of purpose and belonging","Home is wherever you earn more money"],ans:2,diff:"hard",exp:"The novel treats 'home' as deeply complex — Bepo's family is his home, but so is his school, his students, his mission. The conflict arises precisely because he has multiple 'homes.'"},
+    {q:"What makes The Lekki Headmaster a work of social realism?",opts:["It invents an entirely fictional Nigeria","It uses a personal story to reflect real societal issues — migration, corruption, education dysfunction","It focuses only on romance","It is set in a fantasy version of Lagos"],ans:1,diff:"hard",exp:"The novel is socially realist because it uses Bepo's personal story as a lens through which to examine real, documented Nigerian social phenomena: Japa, brain drain, educational corruption."},
+    {q:"What is the effect of naming the school 'Stardom' Schools?",opts:["It is a random name choice","It ironically names a 'star'-making institution that Nigeria risks losing its best stars from","It suggests the school is famous nationwide","It has no symbolic significance"],ans:1,diff:"hard",exp:"'Stardom' is subtly ironic — a school meant to make stars (great students and teachers) is at risk of losing its biggest star (Bepo) to migration."},
+    {q:"How does the pep talk tradition Bepo introduced reflect his educational philosophy?",opts:["It shows he wants students to perform publicly","It reflects his belief that student voice and expression are central to education, not just textbooks","It was a business strategy","It was forced by the MD"],ans:1,diff:"medium",exp:"Bepo's pep talk tradition — spontaneous student speeches — embodies his philosophy: students must be active participants in their education, not passive recipients."},
+    {q:"What tension does the novel create between Bepo's duty to his family and his duty to Nigeria?",opts:["It clearly favours family over nation","It clearly favours nation over family","It presents both duties as legitimate and deeply painful — refusing easy answers","It dismisses family duty entirely"],ans:2,diff:"hard",exp:"The novel refuses to morally simplify — both Bepo's duty to his family and to Nigeria are presented as legitimate, creating genuine ethical tension with no easy resolution."},
+    {q:"How does Kabir Alabi Garba use multiple minor characters to develop the Japa theme?",opts:["Minor characters are irrelevant to the theme","Each minor character represents a different attitude or experience of migration — creating a full spectrum","Only Bepo matters to the theme","Minor characters only provide comic relief"],ans:1,diff:"hard",exp:"Akindele (sobering reality), Sola (optimistic), Riike (potential success), Mr. Audu (economic pragmatism) — each embodies a different position on migration, creating a rich thematic spectrum."},
+    {q:"What does the novel suggest a 'good educator' must sacrifice?",opts:["Nothing — good educators are always rewarded","Personal comfort and financial gain for the greater good of student development","Their family entirely","Their health"],ans:1,diff:"medium",exp:"Through Bepo, the novel suggests great educators often sacrifice personal comfort, financial gain, and even family proximity for the sake of their students and country."},
+    {q:"How does the election of prefects (Head Girl process costing ₦50,000) reflect broader Nigerian issues?",opts:["It is an innocent school tradition","It reflects how money and status have penetrated even student leadership — mirroring wider Nigerian corruption","It shows the school values democracy","It is a fundraising strategy"],ans:1,diff:"hard",exp:"The ₦50,000 intent form for Head Girl positions mirrors how wealth and status corrupt even institutions meant to develop young leaders — a microcosm of Nigeria's systemic issues."},
+    {q:"In what way is Bepo's character a critique of the 'just leave' mentality?",opts:["He celebrates those who japa","He shows that skilled, passionate Nigerians staying home can transform institutions in ways departure cannot","He has no opinion on migration","He encourages all teachers to migrate"],ans:1,diff:"hard",exp:"Bepo's decision to stay — and the transformation he represents at Stardom — is a direct counter-argument to the 'just leave' mentality: his presence matters in a way his absence never could."},
+    {q:"What does the novel imply about the relationship between personal purpose and national development?",opts:["Personal purpose has nothing to do with national development","When individuals find and act on their true purpose, national development follows as a natural consequence","National development must always come before personal purpose","Purpose is only relevant for politicians"],ans:1,diff:"hard",exp:"The novel's central argument is that national development happens when individuals like Bepo find their true purpose and act on it — not through mass migration, but through committed local service."},
+    {q:"What final message does Bepo's story leave for JAMB candidates specifically?",opts:["Study abroad as soon as possible","Forget your dreams and focus on money","True success is found in purposeful service — wherever you are, bring your best self","Education is not worth pursuing in Nigeria"],ans:2,diff:"medium",exp:"For JAMB candidates especially, the novel's message is deeply personal: pursue education purposefully, and understand that Nigeria needs you to bring your best — not export it."},
+    {q:"Which literary theme best describes the novel's overall message?",opts:["The inevitability of migration","The redemptive power of purpose and belonging over material gain","The corruption of all Nigerian institutions","The superiority of family over everything"],ans:1,diff:"medium",exp:"The overarching theme is the redemptive power of purpose — Bepo's return demonstrates that true fulfilment comes from meaningful service, not financial comfort or physical comfort abroad."}
+  ]}
+];
+
+// ── CBT LOGIC ──
+let currentSection = null;
+let currentQ = 0;
+let answered = [];
+
+function startSection(idx) {
+  currentSection = idx;
+  currentQ = 0;
+  answered = new Array(allSections[idx].qs.length).fill(null);
+  document.getElementById('sectionPicker').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'block';
+  const s = allSections[idx];
+  document.getElementById('cbtInfoBar').innerHTML = `
+    <div class="info-pill"><span class="dot"></span>${s.name}</div>
+    <div class="info-pill"><span class="dot"></span>30 Questions</div>
+    <div class="info-pill"><span class="dot"></span>Instant Feedback</div>`;
+  document.getElementById('scoreCard').classList.remove('show');
+  document.getElementById('quizArea').style.display = 'block';
+  document.getElementById('cbtControls').style.display = 'flex';
+  renderQuestion();
+}
+
+function backToSections() {
+  document.getElementById('sectionPicker').style.display = 'block';
+  document.getElementById('quizSection').style.display = 'none';
+}
+
+function renderQuestion() {
+  const qs = allSections[currentSection].qs;
+  const q = qs[currentQ];
+  const userAns = answered[currentQ];
+  const letters = ['A','B','C','D'];
+  const diffMap = {easy:'Easy',medium:'Medium',hard:'Hard'};
+
+  let optsHTML = q.opts.map((o,i) => {
+    let cls='', dis='';
+    if(userAns !== null){ dis='disabled'; if(i===q.ans) cls='correct'; else if(i===userAns&&i!==q.ans) cls='wrong'; }
+    return `<li><button class="option-btn ${cls}" ${dis} onclick="selectAnswer(${i})"><span class="opt-letter">${letters[i]}</span>${o}</button></li>`;
+  }).join('');
+
+  let expHTML = userAns !== null
+    ? `<div class="q-explanation show"><strong>💡 Explanation:</strong> ${q.exp}</div>`
+    : `<div class="q-explanation"></div>`;
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="q-card">
+      <div class="q-meta"><span class="q-num">Question ${currentQ+1} of ${qs.length}</span><span class="q-badge ${q.diff}">${diffMap[q.diff]}</span></div>
+      <div class="q-text">${q.q}</div>
+      <ul class="options-list">${optsHTML}</ul>
+      ${expHTML}
+    </div>`;
+
+  updateProgress();
+  document.getElementById('btnPrev').disabled = currentQ===0;
+  const isLast = currentQ === qs.length-1;
+  const btnNext = document.getElementById('btnNext');
+  btnNext.textContent = isLast ? 'Finish Quiz' : 'Next →';
+  btnNext.className = isLast ? 'btn-finish' : 'btn-nav';
+  document.getElementById('pageIndicator').textContent = `${currentQ+1} / ${qs.length}`;
+}
+
+function selectAnswer(idx) {
+  if(answered[currentQ]!==null) return;
+  answered[currentQ] = idx;
+  renderQuestion();
+}
+
+function navigate(dir) {
+  const qs = allSections[currentSection].qs;
+  if(dir===1 && currentQ===qs.length-1){ showScore(); return; }
+  currentQ = Math.max(0, Math.min(qs.length-1, currentQ+dir));
+  renderQuestion();
+}
+
+function updateProgress() {
+  const done = answered.filter(a=>a!==null).length;
+  document.getElementById('progressFill').style.width = (done/allSections[currentSection].qs.length*100)+'%';
+}
+
+function showScore() {
+  const qs = allSections[currentSection].qs;
+  const correct = answered.reduce((s,a,i)=>a===qs[i].ans?s+1:s,0);
+  const pct = Math.round(correct/qs.length*100);
+  const emoji = pct>=80?'🏆':pct>=60?'👍':pct>=40?'📚':'💪';
+  const msg = pct>=80?'Excellent! You are very ready for JAMB!':pct>=60?'Good work! Keep revising the chapters.':pct>=40?'Fair attempt. Review the chapter summaries.':'Keep studying! Read all chapters again.';
+  document.getElementById('quizArea').style.display='none';
+  document.getElementById('cbtControls').style.display='none';
+  const sc = document.getElementById('scoreCard');
+  sc.innerHTML=`<div class="score-emoji">${emoji}</div><h2>Section Complete!</h2><div class="score-big">${correct}/${qs.length}</div><p>${pct}% · ${msg}</p><div class="score-btns"><button class="btn-retry" onclick="retryQuiz()">🔄 Retry</button><button class="btn-back-sections" onclick="backToSections();resetQuiz()">← Try Another Section</button></div>`;
+  sc.classList.add('show');
+}
+
+function retryQuiz() {
+  currentQ=0; answered=new Array(allSections[currentSection].qs.length).fill(null);
+  document.getElementById('progressFill').style.width='0%';
+  document.getElementById('scoreCard').classList.remove('show');
+  document.getElementById('quizArea').style.display='block';
+  document.getElementById('cbtControls').style.display='flex';
+  renderQuestion();
+}
+
+function resetQuiz() { currentSection=null; currentQ=0; answered=[]; document.getElementById('progressFill').style.width='0%'; }
+</script>
+</body>
+</html>
